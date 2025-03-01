@@ -62,4 +62,34 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const hamburger = document.querySelector(".hamburger");
+    const navLinks = document.querySelector(".nav-links");
+  
+    // Toggle mobile navigation when clicking the hamburger menu
+    hamburger.addEventListener("click", function () {
+      navLinks.classList.toggle("active");
+  
+      // Ensure the menu is displayed when activated
+      if (navLinks.classList.contains("active")) {
+        navLinks.style.display = "flex";
+      } else {
+        setTimeout(() => {
+          navLinks.style.display = "none";
+        }, 300); // Delay hiding to allow fade-out animation
+      }
+    });
+  
+    // Ensure nav is always visible when resizing to large screens
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 768) {
+        navLinks.style.display = "flex"; // Show nav bar when back in large screen mode
+        navLinks.classList.remove("active"); // Remove any active mobile state
+      } else {
+        navLinks.style.display = "none"; // Ensure it's hidden in mobile view initially
+      }
+    });
+  });
+  
   

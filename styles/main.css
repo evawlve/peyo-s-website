@@ -12,36 +12,127 @@
     color: #333;
   }
 
-  /* Header & Navigation */
-  header {
+  
+  /* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #007BFF;
+  color: white;
+  padding: 1rem;
+  position: relative;
+}
+
+/* Logo (Company Name) */
+header .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  z-index: 2;
+}
+
+/* Hamburger Menu Button */
+.hamburger {
+  display: none; /* Hidden by default on large screens */
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  position: absolute;
+  top: 15%; /* Centers properly */
+  right: 15px; /* Positions at the top-right */
+  z-index: 3;
+  padding: 8px;
+}
+
+/* Fix Hover Issue on Hamburger */
+.hamburger:hover {
+  background: rgba(255, 255, 255, 0.2); /* Subtle hover effect */
+  border-radius: 5px;
+}
+
+/* ✅ Desktop Navigation (Make Sure It is Always Visible) */
+nav {
+  flex-grow: 1;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex; /* ✅ Ensure nav bar is always visible on desktop */
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-links li {
+  margin: 0 1rem;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 8px 12px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.nav-links a:hover {
+  background: rgba(255, 255, 255, 0.2); /* Light background on hover */
+  border-radius: 5px;
+}
+
+/* ✅ Mobile Responsive Navigation */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block; /* Show hamburger menu only on mobile */
+  }
+
+  /* ✅ Hide nav-links only for mobile screens */
+  .nav-links {
+    display: none; /* Hide menu by default */
+    flex-direction: column;
     background: #007BFF;
-    color: #fff;
-    padding: 1rem;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    padding: 1rem 0;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
   }
-  header .logo {
-    font-size: 1.5rem;
+
+  .nav-links.active {
+    display: flex; /* Show when active */
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Mobile Nav Links as Buttons */
+  .nav-links li {
+    width: 80%;
+    margin: 0.5rem auto; /* Add spacing between buttons */
+  }
+
+  .nav-links a {
+    display: block;
+    background: white;
+    color: #007BFF;
     font-weight: bold;
-  }
-  nav {
-    margin-top: 1rem;
-  }
-  nav ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-  }
-  nav ul li {
-    margin: 0 1rem;
-  }
-  nav ul li a {
-    color: #fff;
+    padding: 12px;
+    border-radius: 5px;
     text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s ease;
+    transition: background 0.3s ease, color 0.3s ease;
   }
-  nav ul li a:hover {
-    color: #ffcc00; /* Accent hover color */
+
+  .nav-links a:hover {
+    background: #0056b3;
+    color: white;
   }
+}
+
+
 
   /* Hero Section */
   .hero {
@@ -238,14 +329,3 @@ button:hover {
   transform: scale(1.05);
 }
 
-
-  /* Responsive Adjustments */
-  @media (max-width: 768px) {
-    .services {
-      flex-direction: column;
-      align-items: center;
-    }
-    .service {
-      width: 80%;
-    }
-  }
