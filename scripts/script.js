@@ -66,30 +66,57 @@ document.addEventListener("DOMContentLoaded", function () {
   document.addEventListener("DOMContentLoaded", function () {
     const hamburger = document.querySelector(".hamburger");
     const navLinks = document.querySelector(".nav-links");
-  
+
     // Toggle mobile navigation when clicking the hamburger menu
     hamburger.addEventListener("click", function () {
-      navLinks.classList.toggle("active");
-  
-      // Ensure the menu is displayed when activated
-      if (navLinks.classList.contains("active")) {
-        navLinks.style.display = "flex";
-      } else {
-        setTimeout(() => {
-          navLinks.style.display = "none";
-        }, 300); // Delay hiding to allow fade-out animation
-      }
+        if (!navLinks.classList.contains("active")) {
+            // First, make it visible before fading in
+            navLinks.style.visibility = "visible";
+            navLinks.style.display = "flex";
+
+            // Delay opacity and transform slightly so fade-in works
+            setTimeout(() => {
+                navLinks.classList.add("active");
+                navLinks.style.opacity = "1";
+                navLinks.style.transform = "translateY(0)";
+            }, 10); // Small delay ensures transition works
+        } else {
+            // Fade out effect
+            navLinks.style.opacity = "0";
+            navLinks.style.transform = "translateY(-10px)";
+
+            // Delay hiding the menu until after fade-out completes
+            setTimeout(() => {
+                if (!navLinks.classList.contains("active")) {
+                    navLinks.style.visibility = "hidden";
+                    navLinks.style.display = "none";
+                }
+            }, 300);
+        }
+
+        // Toggle class
+        navLinks.classList.toggle("active");
     });
-  
+
     // Ensure nav is always visible when resizing to large screens
     window.addEventListener("resize", function () {
-      if (window.innerWidth > 768) {
-        navLinks.style.display = "flex"; // Show nav bar when back in large screen mode
-        navLinks.classList.remove("active"); // Remove any active mobile state
-      } else {
-        navLinks.style.display = "none"; // Ensure it's hidden in mobile view initially
-      }
+        if (window.innerWidth > 768) {
+            navLinks.style.visibility = "visible";
+            navLinks.style.display = "flex";
+            navLinks.style.opacity = "1";
+            navLinks.style.transform = "translateY(0)";
+            navLinks.classList.remove("active");
+        } else {
+            navLinks.style.visibility = "hidden";
+            navLinks.style.display = "none";
+            navLinks.style.opacity = "0";
+            navLinks.style.transform = "translateY(-10px)";
+        }
     });
-  });
+});
+
+
+  
+  
   
   

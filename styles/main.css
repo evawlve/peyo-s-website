@@ -87,27 +87,29 @@ nav {
     display: block; /* Show hamburger menu only on mobile */
   }
 
-  /* ✅ Hide nav-links only for mobile screens */
-  .nav-links {
-    display: none; /* Hide menu by default */
-    flex-direction: column;
-    background: #007BFF;
-    position: absolute;
-    top: 60px;
-    left: 0;
-    width: 100%;
-    padding: 1rem 0;
-    text-align: center;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-  }
+  /* Hide menu initially but allow transitions */
+.nav-links {
+  visibility: hidden; /* Ensures transition works */
+  opacity: 0;
+  transform: translateY(-10px);
+  flex-direction: column;
+  background: #007BFF;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  padding: 1rem 0;
+  text-align: center;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, visibility 0s linear 0.3s; /* Delay hiding visibility */
+}
 
-  .nav-links.active {
-    display: flex; /* Show when active */
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* When active, make menu visible */
+.nav-links.active {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
 
   /* Mobile Nav Links as Buttons */
   .nav-links li {
