@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us | Company Name</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/form.css"> <!-- Additional styling for forms -->
+</head>
+<body>
+  <header>
+    <div class="logo">Company Name</div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="carpet.html">Carpet Cleaning</a></li>
+        <li><a href="snow.html">Snow Removal</a></li>
+        <li><a href="landscape.html">Landscaping</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="contact">
+      <h2>Contact Us</h2>
+      <p>If you have any questions or would like to request a quote, please fill out the form below, and we’ll get back to you as soon as possible.</p>
+
+      <form id="contact-form" action="/submit-inquiry" method="POST" novalidate>
+        <fieldset>
+          <label for="first-name">First Name: </label>
+          <input type="text" id="first-name" name="first-name" required placeholder="First Name">
+
+          <label for="last-name">Last Name: </label>
+          <input type="text" id="last-name" name="last-name" required placeholder="Last Name">
+
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required placeholder="Your Email">
+
+          <label for="phone">Phone Number:</label>
+          <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required placeholder="1234567890">
+          <small>Format: 10-digit number</small>
+
+          <label for="service">Service:</label>
+          <select id="service" name="service">
+            <option value="">-- Select a Service --</option>
+            <option value="carpet">Carpet Cleaning</option>
+            <option value="snow">Snow Removal</option>
+            <option value="landscaping">Landscaping</option>
+          </select>
+
+          <label for="message">Message:</label>
+          <textarea id="message" name="message" rows="4" required placeholder="Your message"></textarea>
+
+          <button type="submit">Submit Inquiry</button>
+        </fieldset>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Company Name. All rights reserved.</p>
+    <p><a href="contact.html">Contact Us</a></p>
+  </footer>
+
+  <script src="scripts/script.js"></script>
+</body>
+</html>
