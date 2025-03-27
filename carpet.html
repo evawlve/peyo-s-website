@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carpet Cleaning | V&B Luxe</title>
   <link rel="stylesheet" href="/styles/main.css">
-  <link rel="stylesheet" href="/styles/form.css">
+  <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
 </head>
 <body>
     <header>
-        <div class="logo">V&B Luxe</div>
+      <a href="index.html" class="logo">
+        <img src="/images/vnb-luxe-logo-cropped.svg" alt="V&B Luxe Logo" class="logo-img">
+      </a>
         <button class="hamburger" aria-label="Toggle navigation">
           ☰
         </button>
@@ -25,8 +27,11 @@
       </header>
       
 
-  <section class="hero" style="background: url('/images/grey-carpet-background.jpg') center/cover no-repeat;">
-    <h1>Carpet Cleaning</h1>
+  <section class="hero" style="background: url('/images/Carpet.webp') center/cover no-repeat;">
+    <div class="hero-row">
+      <h1>Carpet Cleaning</h1>
+      <a href="contact.html?service=carpet" class="quote-button">Request a Quote</a>
+    </div>
   </section>
 
   <main>
@@ -40,13 +45,69 @@
       </p>
     </section>
 
-    <a href="contact.html?service=carpet" class="quote-button">Request a Quote</a>
-
+    
   </main>
 
+  <!-- Hidden Form For Request a Quote Button-->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <button class="close-modal" id="close-modal">&times;</button>
+      <h2>Contact Us</h2>
+      <form id="contact-form" action="https://formspree.io/f/xjkybbbo" method="POST" novalidate>
+        <fieldset>
+          <label for="first-name">First Name:</label>
+          <input type="text" id="first-name" name="first-name" required placeholder="First Name">
+  
+          <label for="last-name">Last Name:</label>
+          <input type="text" id="last-name" name="last-name" required placeholder="Last Name">
+  
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required placeholder="Your Email">
+  
+          <label for="phone">Phone Number:</label>
+          <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required placeholder="1234567890">
+          <small>Format: 10-digit number</small>
+  
+          <label for="service">Service:</label>
+          <select id="service" name="service">
+            <option value="">-- Select a Service --</option>
+            <option value="carpet">Carpet Cleaning</option>
+            <option value="snow">Snow Removal</option>
+            <option value="landscape">Landscaping</option>
+          </select>
+  
+          <label for="message">Message:</label>
+          <textarea id="message" name="message" rows="4" required placeholder="Your message"></textarea>
+  
+          <div class="form-footer-wrap">
+            <button type="submit">Submit Inquiry</button>
+            <div class="form-footer">
+              <p>or call us at <a href="tel:+15303149400">(530)314-9400</a></p>
+            </div>
+          </div>
+
+        </fieldset>
+      </form>
+    </div>
+  </div>
+
   <footer>
-    <p>&copy; 2025 V&B Luxe. All rights reserved.</p>
-    <p><a href="contact.html">Contact Us</a></p>
+    <div class="footer-container">
+      <div class="about-section">
+        <h3>V&B Luxe</h3>
+        <p>We are your trusted experts in carpet cleaning, snow removal, and house landscaping. Our mission is to deliver quality service that leaves your spaces spotless and welcoming, est. 2025.</p>
+      </div>
+      <div class="contact-section">
+        <h3>Contact Us</h3>
+        <p>Email:
+          <a href="mailto:pedro.vnb.luxe@gmail.com">pedro.vnb.luxe@gmail.com</a><br>
+          Phone:
+          <a href="tel:+15303149400">(530)314-9400</a>
+        </p>
+        <p>Get in Touch: <a href="contact.html">Contact Form</a></p>
+      </div>
+    </div>
+    <p class="copyright">© 2025 V&B Luxe. All rights reserved.</p>
   </footer>
 
   <script src="/scripts/script.js"></script>

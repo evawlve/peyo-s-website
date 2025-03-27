@@ -1,10 +1,58 @@
+document.body.classList.remove("no-js");
 document.addEventListener("DOMContentLoaded", function () {
-    // Pre-select the service based on the URL parameter
-    const params = new URLSearchParams(window.location.search);
-    const service = params.get("service");
-    if (service) {
-      document.getElementById("service").value = service;
+  const modalOverlay = document.getElementById("modal-overlay");
+  const closeModalBtn = document.getElementById("close-modal");
+  const quoteButtons = document.querySelectorAll(".quote-button");
+  const body = document.body;
+
+  if (!modalOverlay || !closeModalBtn || quoteButtons.length === 0) {
+    console.warn("Modal or quote buttons not found on this page.");
+    return;
+  }
+
+  function showModal(service = "") {
+    modalOverlay.style.display = "flex";
+
+    // Trigger fade-in animation
+    requestAnimationFrame(() => {
+      modalOverlay.classList.add("show");
+      body.classList.add("modal-open");
+
+      // Pre-select dropdown
+      const serviceSelect = document.getElementById("service");
+      if (serviceSelect && service) {
+        serviceSelect.value = service;
+      }
+    });
+  }
+
+  function hideModal() {
+    modalOverlay.classList.remove("show");
+    body.classList.remove("modal-open");
+
+    // Delay hiding modal until fade-out completes
+    setTimeout(() => {
+      modalOverlay.style.display = "none";
+    }, 300); // Match CSS transition duration
+  }
+
+  quoteButtons.forEach(button => {
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      const href = button.getAttribute("href");
+      const serviceMatch = href.match(/service=(\w+)/);
+      const service = serviceMatch ? serviceMatch[1] : "";
+      showModal(service);
+    });
+  });
+
+  closeModalBtn.addEventListener("click", hideModal);
+
+  modalOverlay.addEventListener("click", (e) => {
+    if (e.target === modalOverlay) {
+      hideModal();
     }
+  });
   
     // Form validation
     const form = document.getElementById("contact-form");
