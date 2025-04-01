@@ -1,0 +1,177 @@
+/* Contact Page - No Clashes with Existing .contact-section */
+
+/* 1) Basic Page Layout */
+#contact-page .c-page-section {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#contact-page h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #001d3d;
+}
+
+#contact-page .c-page-subtitle {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+/* 2) Container with two columns */
+#contact-page .c-page-container {
+  display: flex;
+  justify-content: space-between; /* Left col + right col with space */
+  align-items: flex-start;
+  gap: 2rem;
+  flex-wrap: wrap;        /* allow wrap on smaller screens */
+}
+
+/* 3) Left Column: Form */
+#contact-page .c-page-form {
+  flex: 1 1 55%;          /* ~55% of the container width */
+  max-width: 600px;
+  text-align: left;       /* text left for the form fields */
+}
+
+/* The actual form styles */
+#contact-page #vnb-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#contact-page fieldset {
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#contact-page label {
+  font-weight: bold;
+}
+
+#contact-page input,
+#contact-page select,
+#contact-page textarea {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#contact-page textarea {
+  resize: vertical;
+}
+
+#contact-page small {
+  display: block;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+#contact-page .c-page-submit {
+  background-color: #0a2c50;
+  color: white;
+  border: none;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+  text-align: center;
+}
+
+#contact-page .c-page-submit:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* 4) Right Column: Contact Info */
+#contact-page .c-page-info {
+  flex: 1 1 40%;
+  max-width: 400px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 10rem;
+}
+
+/* Info lines (icon + link) */
+#contact-page .info-line {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1rem;
+}
+
+#contact-page .info-line .icon {
+  justify-self: start;   /* Icon pinned to the left column */
+}
+
+#contact-page .info-line a {
+  justify-self: center;  /* Anchor text centered within 2nd column */
+  text-align: center;
+}
+
+.info-line a {
+  color: black;
+  text-decoration: none;
+}
+
+#contact-page .icon {
+  width: 20px;
+  height: 20px;
+}
+
+#contact-page hr {
+  margin: 1rem 0;
+  border: none;
+  height: 2px;
+  background: #ccc;
+}
+
+/* Social Icons */
+#contact-page .c-page-socials {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+#contact-page .c-page-socials img {
+  width: 28px;
+  height: 28px;
+  transition: transform 0.2s ease;
+}
+
+#contact-page .c-page-socials a:hover img {
+  transform: scale(1.1);
+}
+
+
+/* 5) Responsive Adjustments */
+@media (max-width: 768px) {
+  #contact-page .c-page-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #contact-page .c-page-form,
+  #contact-page .c-page-info {
+    flex: 1 1 100%;
+    max-width: 600px;
+    margin-top: 1rem;
+  }
+
+  #contact-page .c-page-socials {
+    justify-content: center;
+  }
+}

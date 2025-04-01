@@ -1,13 +1,17 @@
 /* Header */
 header {
+    position: sticky;
+    top: 0;
+    z-index: 998; /* Ensure it stays above other content */
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: #75440b;
     color: white;
     padding: 1rem 1rem;
-    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* 👈 Soft bottom shadow */
   }
+  
   
   /* Logo Image */
   .logo-img {
@@ -66,7 +70,7 @@ header {
   }
   
   .nav-links li {
-    margin: 0 1rem;
+    margin: 0 1.5rem;
   }
   
   .nav-links a {

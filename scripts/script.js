@@ -53,114 +53,108 @@ document.addEventListener("DOMContentLoaded", function () {
       hideModal();
     }
   });
-  
-    // Form validation
-    const form = document.getElementById("contact-form");
-  
-    form.addEventListener("submit", function (event) {
-      let isValid = true;
-      const firstName = document.getElementById("first-name");
-      const lastName = document.getElementById("last-name");
-      const email = document.getElementById("email");
-      const phone = document.getElementById("phone");
-      const service = document.getElementById("service");
-      const message = document.getElementById("message");
-  
-      // Clear previous errors
-      document.querySelectorAll(".error").forEach(el => el.remove());
-  
-      function showError(input, message) {
-        const error = document.createElement("div");
-        error.classList.add("error");
-        error.style.color = "red";
-        error.style.fontSize = "0.9rem";
-        error.style.marginTop = "5px";
-        error.textContent = message;
-        input.parentNode.insertBefore(error, input.nextSibling);
-        isValid = false;
-      }
-  
-      if (firstName.value.trim() === "") {
-        showError(firstName, "First name is required.");
-      }
-  
-      if (lastName.value.trim() === "") {
-        showError(lastName, "Last name is required.");
-      }
-  
-      if (!email.value.match(/^\S+@\S+\.\S+$/)) {
-        showError(email, "Please enter a valid email address.");
-      }
-  
-      if (!phone.value.match(/^\d{10}$/)) {
-        showError(phone, "Please enter a valid 10-digit phone number.");
-      }
-  
-      if (service.value === "") {
-        showError(service, "Please select a service.");
-      }
-  
-      if (message.value.trim() === "") {
-        showError(message, "Message cannot be empty.");
-      }
-  
-      // If invalid, prevent form submission
-      if (!isValid) {
-        event.preventDefault();
-      }
-    });
+    
   });
 
   document.addEventListener("DOMContentLoaded", function () {
     const hamburger = document.querySelector(".hamburger");
     const navLinks = document.querySelector(".nav-links");
+    const transitionDuration = 300; // Match your CSS transition duration in ms
 
-    // Toggle mobile navigation when clicking the hamburger menu
-    hamburger.addEventListener("click", function () {
+    // --- Function to Open Menu ---
+    function openMenu() {
         if (!navLinks.classList.contains("active")) {
-            // First, make it visible before fading in
+            // Make it visible before starting transition
             navLinks.style.visibility = "visible";
-            navLinks.style.display = "flex";
+            navLinks.style.display = "flex"; // Or "block", matching your CSS
 
-            // Delay opacity and transform slightly so fade-in works
+            // Use setTimeout to allow the display change to register before adding class
             setTimeout(() => {
                 navLinks.classList.add("active");
                 navLinks.style.opacity = "1";
                 navLinks.style.transform = "translateY(0)";
-            }, 10); // Small delay ensures transition works
-        } else {
-            // Fade out effect
-            navLinks.style.opacity = "0";
-            navLinks.style.transform = "translateY(-10px)";
+            }, 10); // Small delay
+        }
+    }
 
-            // Delay hiding the menu until after fade-out completes
+    // --- Function to Close Menu ---
+    function closeMenu() {
+        if (navLinks.classList.contains("active")) {
+            // Start fade out
+            navLinks.style.opacity = "0";
+            navLinks.style.transform = "translateY(-10px)"; // Or your desired transform
+            navLinks.classList.remove("active"); // Remove active class immediately
+
+            // Set display:none and visibility:hidden after transition ends
             setTimeout(() => {
+                // Double check it's still meant to be closed
                 if (!navLinks.classList.contains("active")) {
                     navLinks.style.visibility = "hidden";
                     navLinks.style.display = "none";
                 }
-            }, 300);
+            }, transitionDuration);
         }
+    }
 
-        // Toggle class
-        navLinks.classList.toggle("active");
+    // --- Hamburger Click Toggle ---
+    hamburger.addEventListener("click", function (event) {
+        // Optional: stopPropagation if needed, but usually the check below is sufficient
+        // event.stopPropagation();
+        if (navLinks.classList.contains("active")) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
     });
 
-    // Ensure nav is always visible when resizing to large screens
+    // --- Click Outside to Close ---
+    document.addEventListener("click", function (event) {
+        // Check if the menu is open
+        // AND if the click target is NOT the hamburger
+        // AND if the click target is NOT inside the navLinks container
+        if (
+            navLinks.classList.contains("active") &&
+            !hamburger.contains(event.target) &&
+            !navLinks.contains(event.target)
+        ) {
+            closeMenu();
+        }
+    });
+
+    // --- Resize Listener ---
+    // Consider simplifying this - CSS media queries often handle default states better.
+    // This JS mainly needs to ensure state consistency when crossing the breakpoint.
     window.addEventListener("resize", function () {
-        if (window.innerWidth > 768) {
+        const isDesktop = window.innerWidth > 768;
+
+        if (isDesktop) {
+            // On desktop, ensure menu is visible and not in "active" mobile state
             navLinks.style.visibility = "visible";
-            navLinks.style.display = "flex";
+            navLinks.style.display = "flex"; // Use your desktop display type
             navLinks.style.opacity = "1";
             navLinks.style.transform = "translateY(0)";
-            navLinks.classList.remove("active");
+            navLinks.classList.remove("active"); // Crucial: remove mobile state class
         } else {
-            navLinks.style.visibility = "hidden";
-            navLinks.style.display = "none";
-            navLinks.style.opacity = "0";
-            navLinks.style.transform = "translateY(-10px)";
+            // Resizing down to mobile view. If the menu isn't currently active (open),
+            // ensure its styles are reset to the hidden defaults.
+            // If it *is* active, let it stay active until closed manually or by clicking outside.
+            if (!navLinks.classList.contains("active")) {
+                 navLinks.style.visibility = "hidden";
+                 navLinks.style.display = "none";
+                 navLinks.style.opacity = "0";
+                 navLinks.style.transform = "translateY(-10px)"; // Match closed state
+            }
         }
     });
+
+    // Initial setup for mobile: ensure it's hidden if starting on small screen
+    // This might be better handled purely by CSS initially.
+    if (window.innerWidth <= 768 && !navLinks.classList.contains('active')) {
+         navLinks.style.visibility = "hidden";
+         navLinks.style.display = "none";
+         navLinks.style.opacity = "0";
+         navLinks.style.transform = "translateY(-10px)";
+    }
 });
 
 

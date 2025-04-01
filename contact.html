@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact Us | V&B Luxe</title>
-  <link rel="stylesheet" href="/styles/main.css">
   <link rel="stylesheet" href="/styles/header.css">
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/contact.css">
   <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
 </head>
-<body classname="contact-page">
+<body id="contact-page">
     <header>
       <a href="index.html" class="logo">
         <img src="/images/vnb-luxe-logo-cropped.svg" alt="V&B Luxe Logo" class="logo-img">
@@ -27,42 +28,67 @@
         </nav>
       </header>
       
-  <main>
-    <section class="contact">
-      <h2>Contact Us</h2>
-      <p>If you have any questions or would like to request a quote, please fill out the form below, and we’ll get back to you as soon as possible.</p>
-
-      <form id="contact-form" action="https://formspree.io/f/xjkybbbo" method="POST" novalidate>
-        <fieldset>
-          <label for="first-name">First Name: </label>
-          <input type="text" id="first-name" name="first-name" required placeholder="First Name">
-
-          <label for="last-name">Last Name: </label>
-          <input type="text" id="last-name" name="last-name" required placeholder="Last Name">
-
-          <label for="email">Email:</label>
-          <input type="email" id="email" name="email" required placeholder="Your Email">
-
-          <label for="phone">Phone Number:</label>
-          <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required placeholder="1234567890">
-          <small>Format: 10-digit number</small>
-
-          <label for="service">Service:</label>
-          <select id="service" name="service">
-            <option value="">-- Select a Service --</option>
-            <option value="carpet">Carpet Cleaning</option>
-            <option value="snow">Snow Removal</option>
-            <option value="landscape">Landscaping</option>
-          </select>
-
-          <label for="message">Message:</label>
-          <textarea id="message" name="message" rows="4" required placeholder="Your message"></textarea>
-
-          <button type="submit">Submit Inquiry</button>
-        </fieldset>
-      </form>
-    </section>
-  </main>
+      <main class="c-page-section">
+        <h2>Contact Us</h2>
+        <hr id="top-hr">
+        <p class="c-page-subtitle">We’d love to help! Reach out by filling the form or using our contact info below.</p>
+    
+        <div class="c-page-container">
+          <!-- Left: Contact Form -->
+          <div class="c-page-form">
+            <form id="vnb-form"  class="vnb-form" action="https://formspree.io/f/xjkybbbo" method="POST" novalidate>
+              <fieldset>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required placeholder="Your Name">
+        
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required placeholder="Email">
+        
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required placeholder="(123) 456-7890">
+                <small>Format: 10-digit number</small>
+        
+                <label for="service">Service:</label>
+                <select id="service" name="service">
+                  <option value="">-- Select a Service --</option>
+                  <option value="carpet">Carpet Cleaning</option>
+                  <option value="snow">Snow Removal</option>
+                  <option value="landscape">Landscaping</option>
+                </select>
+        
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="4" required placeholder="Your message"></textarea>
+        
+                <button type="submit" class="c-page-submit">Send</button>
+              </fieldset>
+            </form>
+          </div>
+    
+          <!-- Right: Contact Info -->
+          <div class="c-page-info">
+            <div class="info-line">
+              <img src="/images/email.svg" alt="Email Icon" class="icon">
+              <a href="mailto:pedro.vnb.luxe@gmail.com">pedro.vnb.luxe@gmail.com</a>
+            </div>
+    
+            <div class="info-line">
+              <img src="/images/phone.svg" alt="Phone Icon" class="icon">
+              <a href="tel:+15303149400">(530) 314-9400</a>
+            </div>
+    
+            <hr>
+    
+            <div class="c-page-socials">
+              <a href="https://www.facebook.com/profile.php?id=61574926041531" target="_blank">
+                <img src="/images/facebook.svg" alt="Facebook">
+              </a>
+              <a href="https://www.instagram.com/vnb_luxe" target="_blank">
+                <img src="/images/instagram.svg" alt="Instagram">
+              </a>
+            </div>
+          </div>
+        </div>
+      </main>
 
   <footer>
     <div class="footer-container">
@@ -84,5 +110,6 @@
   </footer>
 
   <script src="scripts/script.js"></script>
+  <script src="scripts/validation.js"></script>
 </body>
 </html>
