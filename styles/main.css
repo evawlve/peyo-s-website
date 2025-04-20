@@ -1,4 +1,3 @@
-
   /* Basic Reset */
   * {
     margin: 0;
@@ -10,21 +9,169 @@
     font-family: Arial, sans-serif;
     line-height: 1.6;
     color: #333;
-  }
+  } 
 
   /* Hero Section */
   .hero {
-    height: 300px;
+    min-height: 100vh;
+    width: 100%;
     display: flex;
-    justify-content: center; /* Center the .hero-row horizontally */
-    align-items: center;     /* Vertically center content */
+    align-items: center;
+    justify-content: center;
     color: #fff;
-    text-align: center;
-    background-color: #75440b; /* Match navbar color for seamless loading */
+    background-color: #75440b;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px;
+    padding: 2rem 1.5rem;
+    animation: fadeIn 0.8s ease-in-out;
+    text-align: left;
+  }
+
+  .hero-content h1 {
+    font-size: 3.2rem;
+    font-weight: bold;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    color: #fff;
+    text-align: left;
+  }
+
+  .hero-subtitle {
+    font-size: 1.35rem;
+    font-weight: 400;
+    color: #f5f5f5;
+    margin-bottom: 2.5rem;
+    max-width: 700px;
+    text-align: left;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .hero-row h1 {
+    font-size: 3.2rem;
+  }
+
+  @media screen and (max-width: 768px) {
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .hero-btn {
+      width: 100%;
+    }
+
+    .about-details {
+      flex-direction: column;
+    }
+  
+    .about-block {
+      flex: 1 1 100%;
+    }
+  }
+
+  .hero-btn {
+    display: inline-block;
+    padding: 1rem 2.2rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background 0.25s, color 0.25s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-btn.get-started {
+    background: #0a2c50;
+    color: #fff;
+  }
+  .hero-btn.get-started:hover {
+    background: #0056b3;
+    color: #fff;
+    transform: translateY(-2px) scale(1.04);
+  }
+
+  .hero-btn.contact-btn {
+    background: #fff;
+    color: #75440b;
+    border: 2px solid #75440b;
+  }
+  .hero-btn.contact-btn:hover {
+    background: #be6f13;
+    color: #fff;
+    border-color: #be6f13;
+    transform: translateY(-2px) scale(1.04);
+  }
+
+  @media (max-width: 900px) {
+    .hero-content h1 {
+      font-size: 2.5rem;
+    }
+    .hero-subtitle {
+      font-size: 1.05rem;
+    }
+    .hero-content {
+      padding: 1.2rem 0.5rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .hero {
+      min-height: 70vh;
+      padding: 1rem 0.2rem;
+    }
+    .hero-content h1 {
+      font-size: 2.35rem;
+    }
+    .hero-subtitle {
+      font-size: 0.95rem;
+    }
+    .hero-buttons {
+      flex-direction: column;
+      gap: 0.7rem;
+      align-items: flex-start;
+    }
+    .hero-btn {
+      width: 100%;
+      font-size: 1rem;
+      padding: 0.8rem 0;
+    }
   }
   
   .home-page .hero {
-    background: url('../images/tahoe.webp') center/cover no-repeat;
+    min-height: 100vh;
+    background: linear-gradient(rgba(117,68,11,0.7), rgba(11, 46, 117, 0.5)), url('../images/house.webp') center/cover no-repeat;
   }
 
   .snow-page .hero {
@@ -72,13 +219,6 @@
     }
   }
   
-  /* Adjust heading spacing */
-  .hero h1 {
-    font-size: 3.5rem;
-    text-shadow: 3px 3px black;
-    margin: 0;
-  }
-  
   /* Adjust quote-button size for hero use */
   .hero .quote-button {
     padding: 0.75rem 1.25rem;
@@ -104,7 +244,7 @@
   
   .section-title {
     font-size: 1.5rem;
-    color: #75440b;
+    color: #75440b; /* changed color */
     white-space: nowrap;
   }
   
@@ -139,6 +279,48 @@
     transition: transform 0.3s ease;
   }
 
+  .about-details {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  
+  .about-block {
+    flex: 1 1 45%;
+    padding: 1.5rem;
+    border-radius: 10px;
+  }
+  
+  .about-block h3 {
+    margin-bottom: 0.75rem;
+    color: #75440b;
+    font-size: 1.5rem;
+  }
+  
+  .about-block p {
+    font-size: 1rem;
+    color: black;
+    line-height: 1.6;
+    text-align: left;
+  }
+
+  .about-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .about-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    vertical-align: middle;
+  transform: translateY(-6px); /* Adjust this value as needed */
+  }
+
   @media (max-width: 1024px) {
     .features-grid {
       grid-template-columns: repeat(2, 1fr); /* 2 by 2 layout */
@@ -162,7 +344,7 @@
   
   .feature-item h3 {
     margin-bottom: 0.5rem;
-    color: #75440b;
+    color: #75440b; /* changed color */
   }
   
   .feature-item p {
@@ -172,7 +354,7 @@
 
   /* Index page Services */
   .services-title {
-    color: #001d3d;
+    color: #001d3d; /* changed color */
   }
   .services {
     display:  flex;
@@ -528,5 +710,3 @@ button:hover {
   font-size: 0.9rem;
   margin-top: 5px;
 }
-
-
