@@ -1,5 +1,26 @@
 document.body.classList.remove("no-js");
+
+// Smooth scroll function
+function smoothScrollTo(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const headerOffset = document.querySelector('header').offsetHeight;
+  const elementPosition = el.getBoundingClientRect().top + window.pageYOffset;
+  const offsetPosition = elementPosition - headerOffset - 20; // extra 20px for breathing room
+
+  window.scrollTo({
+    top: offsetPosition,
+    behavior: 'smooth',
+  });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
+  // Initialize smooth scroll for Get Started button
+  const getStartedBtn = document.querySelector('.hero-btn.get-started');
+  if (getStartedBtn) {
+    getStartedBtn.addEventListener('click', () => smoothScrollTo('intro'));
+  }
   const modalOverlay = document.getElementById("modal-overlay");
   const closeModalBtn = document.getElementById("close-modal");
   const quoteButtons = document.querySelectorAll(".quote-button");
