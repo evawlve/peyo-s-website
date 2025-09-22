@@ -19,19 +19,35 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize smooth scroll for Get Started button
   const getStartedBtn = document.querySelector('.hero-btn.get-started');
   if (getStartedBtn) {
-    getStartedBtn.addEventListener('click', () => smoothScrollTo('intro'));
+    // Check which page we're on and scroll to appropriate section
+    if (document.body.classList.contains('carpet-page')) {
+      getStartedBtn.addEventListener('click', () => smoothScrollTo('before-after'));
+    } else if (document.body.classList.contains('landscape-page')) {
+      getStartedBtn.addEventListener('click', () => smoothScrollTo('landscape-services'));
+    } else if (document.body.classList.contains('snow-page')) {
+      getStartedBtn.addEventListener('click', () => smoothScrollTo('snow-services'));
+    } else {
+      getStartedBtn.addEventListener('click', () => smoothScrollTo('intro'));
+    }
   }
   const modalOverlay = document.getElementById("modal-overlay");
   const closeModalBtn = document.getElementById("close-modal");
   const quoteButtons = document.querySelectorAll(".quote-button");
   const body = document.body;
 
-  if (!modalOverlay || !closeModalBtn || quoteButtons.length === 0) {
-    console.warn("Modal or quote buttons not found on this page.");
+  console.log('Modal elements found:');
+  console.log('modalOverlay:', modalOverlay);
+  console.log('closeModalBtn:', closeModalBtn);
+  console.log('quoteButtons:', quoteButtons.length);
+
+  if (!modalOverlay || !closeModalBtn) {
+    console.warn("Modal elements not found on this page.");
     return;
   }
 
   function showModal(service = "") {
+    console.log('showModal called with service:', service);
+    console.log('modalOverlay element:', modalOverlay);
     modalOverlay.style.display = "flex";
 
     // Trigger fade-in animation
@@ -43,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const serviceSelect = document.getElementById("service");
       if (serviceSelect && service) {
         serviceSelect.value = service;
+        console.log('Service selected:', service);
       }
     });
   }
@@ -57,12 +74,52 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 300); // Match CSS transition duration
   }
 
-  quoteButtons.forEach(button => {
+  // Only add quote button listeners if quote buttons exist
+  if (quoteButtons.length > 0) {
+    quoteButtons.forEach(button => {
+      button.addEventListener("click", (e) => {
+        e.preventDefault();
+        const href = button.getAttribute("href");
+        if (href) {
+          // Handle buttons with href (links)
+          const serviceMatch = href.match(/service=(\w+)/);
+          const service = serviceMatch ? serviceMatch[1] : "";
+          showModal(service);
+        } else {
+          // Handle buttons without href (button elements)
+          // Determine service based on page class
+          let service = "";
+          if (document.body.classList.contains('carpet-page')) {
+            service = "carpet";
+          } else if (document.body.classList.contains('landscape-page')) {
+            service = "landscape";
+          } else if (document.body.classList.contains('snow-page')) {
+            service = "snow";
+          }
+          showModal(service);
+        }
+      });
+    });
+  }
+
+  // Handle contact buttons in hero sections
+  const contactButtons = document.querySelectorAll('.hero-btn.contact-btn');
+  console.log('Found contact buttons:', contactButtons.length);
+  contactButtons.forEach((button, index) => {
+    console.log(`Adding listener to button ${index}`);
     button.addEventListener("click", (e) => {
+      console.log('Contact button clicked!');
       e.preventDefault();
-      const href = button.getAttribute("href");
-      const serviceMatch = href.match(/service=(\w+)/);
-      const service = serviceMatch ? serviceMatch[1] : "";
+      // Determine service based on page class
+      let service = "";
+      if (document.body.classList.contains('carpet-page')) {
+        service = "carpet";
+      } else if (document.body.classList.contains('landscape-page')) {
+        service = "landscape";
+      } else if (document.body.classList.contains('snow-page')) {
+        service = "snow";
+      }
+      console.log('Service determined:', service);
       showModal(service);
     });
   });
@@ -178,8 +235,67 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+// Image Modal Functionality
+document.addEventListener("DOMContentLoaded", function () {
+  const imageModalOverlay = document.getElementById("image-modal-overlay");
+  const closeImageModalBtn = document.getElementById("close-image-modal");
+  const modalImage = document.getElementById("modal-image");
+  const modalCaption = document.getElementById("modal-caption");
+  const clickableImages = document.querySelectorAll(".clickable-image");
+  const body = document.body;
 
-  
-  
-  
+  if (!imageModalOverlay || !closeImageModalBtn || !modalImage || !modalCaption) {
+    console.warn("Image modal elements not found on this page.");
+    return;
+  }
+
+  function showImageModal(imageSrc, caption) {
+    modalImage.src = imageSrc;
+    modalCaption.textContent = caption;
+    imageModalOverlay.style.display = "flex";
+    
+    // Trigger fade-in animation
+    requestAnimationFrame(() => {
+      imageModalOverlay.classList.add("show");
+      body.classList.add("image-modal-open");
+    });
+  }
+
+  function hideImageModal() {
+    imageModalOverlay.classList.remove("show");
+    body.classList.remove("image-modal-open");
+
+    // Delay hiding modal until fade-out completes
+    setTimeout(() => {
+      imageModalOverlay.style.display = "none";
+    }, 300); // Match CSS transition duration
+  }
+
+  // Add click event listeners to all clickable images
+  clickableImages.forEach(image => {
+    image.addEventListener("click", (e) => {
+      e.preventDefault();
+      const imageSrc = image.src;
+      const caption = image.getAttribute("data-caption") || image.alt;
+      showImageModal(imageSrc, caption);
+    });
+  });
+
+  // Close modal when clicking the close button
+  closeImageModalBtn.addEventListener("click", hideImageModal);
+
+  // Close modal when clicking outside the image
+  imageModalOverlay.addEventListener("click", (e) => {
+    if (e.target === imageModalOverlay) {
+      hideImageModal();
+    }
+  });
+
+  // Close modal when pressing Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && imageModalOverlay.classList.contains("show")) {
+      hideImageModal();
+    }
+  });
+});
   

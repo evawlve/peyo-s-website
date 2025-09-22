@@ -175,15 +175,18 @@
   }
 
   .snow-page .hero {
-    background: url('../images/snow.webp') center/cover no-repeat;
+    min-height: 100vh;
+    background: linear-gradient(rgba(117,68,11,0.7), rgba(11, 46, 117, 0.5)), url('../images/snow/snow-hero.png') center/cover no-repeat;
   }
 
   .carpet-page .hero {
-    background: url('../images/Carpet.webp') center/cover no-repeat;
+    min-height: 100vh;
+    background: linear-gradient(rgba(117,68,11,0.7), rgba(11, 46, 117, 0.5)), url('../images/carpet/carpet-hero.png') center/cover no-repeat;
   }
 
   .landscape-page .hero {
-    background: url('../images/landscape.webp') center/cover no-repeat;
+    min-height: 100vh;
+    background: linear-gradient(rgba(117,68,11,0.7), rgba(11, 46, 117, 0.5)), url('../images/landscaping/landscape-hero.png') center/cover no-repeat;
   }
 
   .hero {
@@ -214,6 +217,7 @@
 
   @media (max-width: 768px) {
     .hero-row {
+      text-align: center;
       flex-direction: column;
       gap: 1rem;
     }

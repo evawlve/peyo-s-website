@@ -7,6 +7,7 @@
   <link rel="preload" as="image" href="/images/Carpet.webp" type="image/webp">
   <link rel="stylesheet" href="/styles/main.css">
   <link rel="stylesheet" href="/styles/header.css">
+  <link rel="stylesheet" href="/styles/featurephotos.css">
   <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
 </head>
 <body class="carpet-page">
@@ -30,25 +31,84 @@
       
 
   <section class="hero">
-    <div class="hero-row">
-      <h1>Carpet Cleaning</h1>
-      <a href="contact.html?service=carpet" class="quote-button">Request a Quote</a>
+    <div class="hero-content">
+      <h1>Professional Carpet Cleaning</h1>
+      <p class="hero-subtitle">Transform your carpets with our professional cleaning services. We remove dirt, stains, and allergens to keep your carpets looking fresh and vibrant.</p>
+      <div class="hero-buttons">
+        <button class="hero-btn get-started">View Our Work</button>
+        <button class="hero-btn contact-btn">Contact</button>
+      </div>
     </div>
   </section>
 
   <main>
-    <section class="service-description">
-      <h2>Our Carpet Cleaning Service</h2>
-      <p>
-        At V&B Luxe, we provide thorough carpet cleaning services that remove dirt, stains, and allergens to keep your carpets looking fresh and vibrant.
-      </p>
-      <p>
-        We use state-of-the-art equipment and eco-friendly cleaning solutions to ensure the best results without damaging your carpets. Whether you need a deep clean for your home or office, our team is ready to help.
-      </p>
-    </section>
+    
+    <!-- Before and After Section -->
+    <section id="before-after" class="before-after-section">
+      <div class="section-title">
+        <hr>
+        <h2>Our Work - Before & After</h2>
+        <hr>
+      </div>
+      <p class="section-description">At V&B Luxe, we provide thorough carpet cleaning services that remove dirt, stains, and allergens to keep your carpets looking fresh and vibrant. See the transformation our professional carpet cleaning services can achieve:</p>
+      
+      <div class="before-after-grid">
+        <div class="comparison-set">
+          <div class="before-after-pair">
+            <div class="image-container before">
+              <img src="/images/carpet/before1.jpg" alt="Carpet before cleaning - Example 1" loading="lazy" class="clickable-image" data-caption="Carpet before professional cleaning - Example 1">
+              <div class="image-label">Before</div>
+            </div>
+            <div class="image-container after">
+              <img src="/images/carpet/after1.jpg" alt="Carpet after cleaning - Example 1" loading="lazy" class="clickable-image" data-caption="Carpet after professional cleaning - Example 1">
+              <div class="image-label">After</div>
+            </div>
+          </div>
+        </div>
 
+        <div class="comparison-set">
+          <div class="before-after-pair">
+            <div class="image-container before">
+              <img src="/images/carpet/before2.jpg" alt="Carpet before cleaning - Example 2" loading="lazy" class="clickable-image" data-caption="Carpet before professional cleaning - Example 2">
+              <div class="image-label">Before</div>
+            </div>
+            <div class="image-container after">
+              <img src="/images/carpet/after2.jpg" alt="Carpet after cleaning - Example 2" loading="lazy" class="clickable-image" data-caption="Carpet after professional cleaning - Example 2">
+              <div class="image-label">After</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comparison-set">
+          <div class="before-after-pair">
+            <div class="image-container before">
+              <img src="/images/carpet/before3.jpg" alt="Carpet before cleaning - Example 3" loading="lazy" class="clickable-image" data-caption="Carpet before professional cleaning - Example 3">
+              <div class="image-label">Before</div>
+            </div>
+            <div class="image-container after">
+              <img src="/images/carpet/after3.jpg" alt="Carpet after cleaning - Example 3" loading="lazy" class="clickable-image" data-caption="Carpet after professional cleaning - Example 3">
+              <div class="image-label">After</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-container">
+        <h2>Ready to see these results in your home?</h2>
+        <button class="quote-button">Get Your Free Quote</button>
+      </div>
+    </section>
     
   </main>
+
+  <!-- Image Modal for Before/After Images -->
+  <div class="image-modal-overlay" id="image-modal-overlay">
+    <div class="image-modal">
+      <button class="close-image-modal" id="close-image-modal">&times;</button>
+      <img id="modal-image" src="" alt="Enlarged image">
+      <div class="image-modal-caption" id="modal-caption"></div>
+    </div>
+  </div>
 
   <!-- Hidden Form For Request a Quote Button-->
   <div class="modal-overlay" id="modal-overlay">
