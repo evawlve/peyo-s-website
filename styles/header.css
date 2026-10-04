@@ -1,141 +1,351 @@
-/* Header */
-header {
-    position: sticky;
-    top: 0;
-    z-index: 998; /* Ensure it stays above other content */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #75440b;
-    color: white;
-    padding: 1rem 1rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* 👈 Soft bottom shadow */
+/* ==========================================================================
+   V&B Luxe — site header and navigation
+   Sticky brand-brown bar (the logo is white, so the bar stays dark).
+   States set by script.js: .is-scrolled (compact) and .nav-open (mobile menu).
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   Header bar
+   -------------------------------------------------------------------------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  color: #fff;
+  background: linear-gradient(180deg, var(--color-brand) 0%, var(--color-brand-700) 100%);
+  box-shadow: 0 4px 18px rgb(31 26 23 / 0.12);
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+/* Frosted variant where supported: the page shows faintly through the brown */
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .site-header {
+    background: linear-gradient(180deg, rgb(117 68 11 / 0.94) 0%, rgb(90 51 8 / 0.94) 100%);
+    -webkit-backdrop-filter: saturate(140%) blur(14px);
+    backdrop-filter: saturate(140%) blur(14px);
   }
-  
-  
-  /* Logo Image */
+}
+
+/* Thin amber hairline along the bottom edge */
+.site-header::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(231 166 90 / 0.55), transparent);
+  pointer-events: none;
+}
+
+.site-header.is-scrolled {
+  box-shadow: 0 10px 30px rgb(31 26 23 / 0.28);
+}
+
+.header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+  min-height: var(--header-h);
+  transition: min-height 0.3s var(--ease-out);
+}
+
+.site-header.is-scrolled .header-inner {
+  min-height: 64px;
+}
+
+
+/* --------------------------------------------------------------------------
+   Logo
+   -------------------------------------------------------------------------- */
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+}
+
+.logo-img {
+  width: auto;
+  height: 48px;
+  transition: height 0.3s var(--ease-out), opacity var(--duration) ease;
+}
+
+.logo:hover .logo-img {
+  opacity: 0.9;
+}
+
+.site-header.is-scrolled .logo-img {
+  height: 40px;
+}
+
+@media (width > 860px) {
   .logo-img {
-    height: 4rem; /* Adjust as needed */
-    width: auto;
-    display: block;
+    height: 54px;
   }
-  
-  /* Make the text align better */
-  .logo-text {
-    line-height: 1;
+
+  .site-header.is-scrolled .logo-img {
+    height: 44px;
   }
-  
-  /* Logo (Company Name) */
-  header .logo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: bold;
-    font-size: 1.5rem;
-    z-index: 2;
+}
+
+
+/* --------------------------------------------------------------------------
+   Navigation links (shared)
+   -------------------------------------------------------------------------- */
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin: 0;
+}
+
+.nav-links a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: rgb(255 255 255 / 0.86);
+  text-decoration: none;
+  border-radius: var(--radius-pill);
+  transition: background-color var(--duration) ease, color var(--duration) ease;
+}
+
+.nav-links a:hover {
+  color: #fff;
+  background-color: rgb(255 255 255 / 0.1);
+}
+
+.nav-links a[aria-current="page"] {
+  color: #fff;
+}
+
+/* Amber call-to-action pill */
+.nav-links .nav-cta {
+  justify-content: center;
+  padding-inline: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: var(--color-accent);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.18);
+  transition:
+    background-color var(--duration) ease,
+    transform var(--duration) var(--ease-out),
+    box-shadow var(--duration) ease;
+}
+
+.nav-links .nav-cta:hover {
+  color: #fff;
+  background-color: #d07d1c;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.22);
+}
+
+.nav-links .nav-cta[aria-current="page"] {
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.7), 0 4px 14px rgb(0 0 0 / 0.18);
+}
+
+/* Without JS the links simply wrap below the logo on small screens */
+.site-nav {
+  flex-basis: 100%;
+  padding-bottom: var(--space-s);
+}
+
+
+/* --------------------------------------------------------------------------
+   Menu toggle (mobile, JS only)
+   -------------------------------------------------------------------------- */
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: #fff;
+  background-color: rgb(255 255 255 / 0.08);
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: 12px;
+  transition: background-color var(--duration) ease;
+}
+
+.nav-toggle:hover {
+  background-color: rgb(255 255 255 / 0.16);
+}
+
+.nav-toggle-bar {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background-color: currentColor;
+  border-radius: 2px;
+  transition: transform 0.3s var(--ease-out), opacity 0.2s ease;
+}
+
+/* Bars morph into an X: bar height (2px) + gap (5px) = 7px offset */
+.site-header.nav-open .nav-toggle-bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.site-header.nav-open .nav-toggle-bar:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0.2);
+}
+
+.site-header.nav-open .nav-toggle-bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+
+/* --------------------------------------------------------------------------
+   Mobile dropdown panel (≤ 860px, JS enabled)
+   -------------------------------------------------------------------------- */
+
+@media (width <= 860px) {
+  .js .header-inner {
+    flex-wrap: nowrap;
   }
-  
-  /* Hamburger Menu Button */
-  .hamburger {
-    display: none; /* Hidden by default on large screens */
-    font-size: 1.5rem;
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
+
+  .js .nav-toggle {
+    display: inline-flex;
+  }
+
+  .js .site-nav {
     position: absolute;
-    top: 15%; /* Centers properly */
-    right: 15px; /* Positions at the top-right */
-    z-index: 3;
-    padding: 8px;
-  }
-  
-  /* Fix Hover Issue on Hamburger */
-  .hamburger:hover {
-    background: rgba(255, 255, 255, 0.2); /* Subtle hover effect */
-    border-radius: 5px;
-  }
-  
-  /* ✅ Desktop Navigation (Make Sure It is Always Visible) */
-  nav {
-    flex-grow: 1;
-  }
-  
-  .nav-links {
-    list-style: none;
-    display: flex; /* ✅ Ensure nav bar is always visible on desktop */
-    justify-content: center;
-    align-items: center;
-    margin-top: 1rem;
-  }
-  
-  .nav-links li {
-    margin: 0 1.5rem;
-  }
-  
-  .nav-links a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 8px 12px;
-    transition: background 0.3s ease, color 0.3s ease;
-  }
-  
-  .nav-links a:hover {
-    background: rgba(255, 255, 255, 0.2); /* Light background on hover */
-    border-radius: 5px;
-  }
-  
-  /* ✅ Mobile Responsive Navigation */
-  @media (max-width: 768px) {
-    .hamburger {
-      display: block; /* Show hamburger menu only on mobile */
-      margin-top: 1rem;
-    }
-  
-    /* Hide menu initially but allow transitions */
-  .nav-links {
-    visibility: hidden; /* Ensures transition works */
-    opacity: 0;
-    transform: translateY(-10px);
-    flex-direction: column;
-    background: #75440b;
-    position: absolute;
-    top: 60px;
+    top: 100%;
     left: 0;
-    width: 100%;
-    padding: 1rem 0;
-    text-align: center;
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, visibility 0s linear 0.3s; /* Delay hiding visibility */
+    right: 0;
+    max-height: calc(100vh - var(--header-h));
+    max-height: calc(100dvh - var(--header-h));
+    padding: var(--space-s) var(--gutter) var(--space-l);
+    overflow-y: auto;
+    background: linear-gradient(180deg, var(--color-brand-700) 0%, #482906 100%);
+    border-top: 1px solid rgb(255 255 255 / 0.08);
+    box-shadow: 0 24px 40px rgb(31 26 23 / 0.3);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition:
+      opacity 0.25s ease,
+      transform 0.3s var(--ease-out),
+      visibility 0s linear 0.3s;
   }
-  
-  /* When active, make menu visible */
-  .nav-links.active {
+
+  .js .site-header.nav-open .site-nav {
     visibility: visible;
     opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    transform: none;
+    transition:
+      opacity 0.25s ease,
+      transform 0.3s var(--ease-out),
+      visibility 0s;
   }
-  
-    /* Mobile Nav Links as Buttons */
-    .nav-links li {
-      width: 80%;
-      margin: 0.5rem auto; /* Add spacing between buttons */
-    }
-  
-    .nav-links a {
-      display: block;
-      background: white;
-      color: #75440b;
-      font-weight: bold;
-      padding: 12px;
-      border-radius: 5px;
-      text-decoration: none;
-      transition: background 0.3s ease, color 0.3s ease;
-    }
-  
-    .nav-links a:hover {
-      background: #be6f13;
-      color: white;
-    }
+
+  .js .nav-links {
+    display: grid;
+    gap: var(--space-2xs);
+    max-width: 32rem;
+    margin-inline: auto;
   }
+
+  .js .nav-links a {
+    min-height: 48px;
+    padding: 0.75rem 1rem;
+    font-size: 1.05rem;
+    border-radius: var(--radius);
+  }
+
+  /* Current page: amber marker on the left */
+  .js .nav-links a[aria-current="page"]:not(.nav-cta) {
+    background-color: rgb(255 255 255 / 0.08);
+    box-shadow: inset 3px 0 0 var(--color-accent-300);
+  }
+
+  .js .nav-links .nav-cta {
+    margin-top: var(--space-xs);
+    border-radius: var(--radius-pill);
+  }
+
+  /* Links cascade in as the panel opens */
+  .js .nav-links li {
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.3s ease, transform 0.35s var(--ease-out);
+  }
+
+  .js .site-header.nav-open .nav-links li {
+    opacity: 1;
+    transform: none;
+  }
+
+  .js .site-header.nav-open .nav-links li:nth-child(2) { transition-delay: 0.04s; }
+  .js .site-header.nav-open .nav-links li:nth-child(3) { transition-delay: 0.08s; }
+  .js .site-header.nav-open .nav-links li:nth-child(4) { transition-delay: 0.12s; }
+  .js .site-header.nav-open .nav-links li:nth-child(5) { transition-delay: 0.16s; }
+}
+
+
+/* --------------------------------------------------------------------------
+   Desktop navigation (> 860px)
+   -------------------------------------------------------------------------- */
+
+@media (width > 860px) {
+  .header-inner {
+    flex-wrap: nowrap;
+  }
+
+  .site-nav {
+    flex-basis: auto;
+    padding-bottom: 0;
+  }
+
+  .nav-links {
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  /* Underline that grows from the center on hover and marks the current page */
+  .nav-links a:not(.nav-cta)::after {
+    content: "";
+    position: absolute;
+    left: 0.9rem;
+    right: 0.9rem;
+    bottom: 0.3rem;
+    height: 2px;
+    background-color: var(--color-accent-300);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transition: transform 0.3s var(--ease-out);
+  }
+
+  .nav-links a:not(.nav-cta):hover::after,
+  .nav-links a[aria-current="page"]:not(.nav-cta)::after {
+    transform: scaleX(1);
+  }
+
+  .nav-links .nav-cta {
+    margin-left: var(--space-xs);
+  }
+}
+
+@media (width > 860px) and (width < 1000px) {
+  .nav-links a {
+    padding-inline: 0.7rem;
+    font-size: 0.9rem;
+  }
+
+  .nav-links a:not(.nav-cta)::after {
+    left: 0.7rem;
+    right: 0.7rem;
+  }
+}

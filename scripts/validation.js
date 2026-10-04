@@ -1,245 +1,353 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const forms = document.querySelectorAll(".vnb-form");
-  
-    forms.forEach(form => {
-      const nameInput = form.querySelector("#name");
-      const emailInput = form.querySelector("#email");
-      const phoneInput = form.querySelector("#phone");
-      const serviceSelect = form.querySelector("#service");
-      const messageInput = form.querySelector("#message"); // optional
-  
-      // Attach real-time validation
-      if (nameInput) {
-        addFocusBlurHandlers(nameInput, validateName);
-      }
-      if (emailInput) {
-        addFocusBlurHandlers(emailInput, validateOptionalEmail);
-      }
-      if (phoneInput) {
-        addFocusBlurHandlers(phoneInput, validateOptionalPhone);
-        // Add phone masking
-        phoneInput.addEventListener("input", () => {
-          phoneInput.value = formatPhone(phoneInput.value);
-        });
-      }
-  
-      // Final check on submit
-      form.addEventListener("submit", (e) => {
-        // Clear old errors
-        form.querySelectorAll(".error").forEach(err => err.remove());
-        // Clear old highlights (optional, but good practice for submit)
-        form.querySelectorAll('input, select').forEach(el => removeHighlight(el));
-    
-        let isValid = true;
-    
-        // 1) Name >= 2 chars
-        if (nameInput) { // Check if element exists
-          if (!validateName(nameInput)) { // Validate the input
-            // Explicitly show error and highlight ON SUBMIT if invalid
-            showError(nameInput, "Name must be at least 2 characters."); // Re-show error message
-            highlightInput(nameInput, "red"); // Apply highlight
-            isValid = false; // Mark form as invalid
-          }
-        }
-    
-    
-        // 2) Email OR Phone on submit
-         const emailVal = emailInput ? emailInput.value.trim() : "";
-         const phoneVal = phoneInput ? stripNonDigits(phoneInput.value) : "";
-    
-         if (!emailVal && !phoneVal) {
-           // Must have at least one
-           if (emailInput) {
-             showError(emailInput, "Please provide either a valid email or phone.");
-             highlightInput(emailInput, "red");
-           }
-           if (phoneInput) {
-             showError(phoneInput, "Please provide either a valid email or phone.");
-             highlightInput(phoneInput, "red");
-           }
-           isValid = false;
-         } else {
-           // If email is not empty => must be valid
-           if (emailVal && !isEmailValid(emailVal)) {
-             showError(emailInput, "Invalid email format.");
-             highlightInput(emailInput, "red");
-             isValid = false;
-           }
-           // If phone is not empty => must be 10 digits
-           // Ensure phone validation check is robust if field might not exist
-           if (phoneVal && phoneInput && phoneVal.length !== 10) {
-             showError(phoneInput, "Please enter a valid 10-digit phone number.");
-             highlightInput(phoneInput, "red");
-             isValid = false;
-           }
-         }
-    
-    
-        // 3) Service required
-        if (serviceSelect && !serviceSelect.value) {
-          showError(serviceSelect, "Please select a service.");
-          highlightInput(serviceSelect, "red");
-          isValid = false;
-        }
-    
-        // 4) Message optional => no checks
-    
-        if (!isValid) {
-          e.preventDefault();
-        }
-      });
-    });
-  });
-  
-  /* ==================== Real-Time Hooks ==================== */
-  
+// @ts-check
+/**
+ * V&B Luxe — quote/contact form validation and submission.
+ *
+ * Enhances every `form.vnb-form` on the page independently:
+ *   - name: at least 2 characters
+ *   - email or phone: at least one is required
+ *   - email: valid format when filled in
+ *   - phone: exactly 10 digits when filled in, masked as (XXX) XXX-XXXX
+ *   - service: required
+ *   - message: optional
+ * Valid forms are sent to Formspree with fetch() so the visitor stays on
+ * the page and sees an inline success or error message.
+ */
+(() => {
+  "use strict";
+
+  /** @typedef {HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement} FormControl */
+  /** @typedef {"name" | "email" | "phone" | "service"} FieldName */
+
+  const MESSAGES = {
+    name: "Please enter your name (at least 2 characters).",
+    contact: "Please add an email address or a phone number.",
+    email: "Please enter a valid email address, like name@example.com.",
+    phone: "Please enter a 10-digit phone number.",
+    service: "Please select a service.",
+  };
+
+  const STATUS = {
+    sending: "Sending…",
+    success: "Thanks! Your request was sent — we'll be in touch soon.",
+    error: "Something went wrong. Please email pedro.vnb.luxe@gmail.com or call (530) 314-9400.",
+  };
+
+  /** @type {FieldName[]} */
+  const VALIDATED_FIELDS = ["name", "phone", "email", "service"];
+
+  const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  /* ------------------------------------------------------------------------
+     Phone helpers
+     ------------------------------------------------------------------------ */
+
+  /** @param {string} value */
+  const digitsOnly = (value) => value.replace(/\D/g, "");
+
   /**
-   * addFocusBlurHandlers
-   *  - onFocus => remove error, remove highlight
-   *  - onBlur  => if invalid => red, else green
+   * Normalize to at most 10 digits, dropping a leading US country code.
+   * @param {string} value
    */
-  function addFocusBlurHandlers(input, validatorFn) {
-  input.addEventListener("focus", () => {
-    removeError(input);
-    removeHighlight(input);
-  });
+  function phoneDigits(value) {
+    const digits = digitsOnly(value);
+    const local = digits.length === 11 && digits.startsWith("1") ? digits.slice(1) : digits;
+    return local.slice(0, 10);
+  }
 
-  input.addEventListener("blur", () => {
-    const isValid = validatorFn(input); // Call the specific validator
+  /**
+   * Format digits progressively as (XXX) XXX-XXXX.
+   * @param {string} digits
+   */
+  function formatPhone(digits) {
+    if (digits.length === 0) return "";
+    if (digits.length <= 3) return `(${digits}`;
+    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  }
 
-    if (!isValid) {
-      // Validator returned false, meaning input is present but invalid
-      highlightInput(input, "red");
-    } else {
-      // Validator returned true. Now check if it was true because
-      // the input is valid, or merely because it's empty (which is allowed for optional fields).
-      if (input.value.trim() !== "") {
-        // It's valid AND not empty, make it green
-        highlightInput(input, "green");
-      } else {
-        // It's valid because it's empty. Ensure no highlight remains.
-        removeHighlight(input);
+  /**
+   * Index in a formatted value just after the given number of digits.
+   * @param {string} formatted
+   * @param {number} digitCount
+   */
+  function caretAfterDigits(formatted, digitCount) {
+    if (digitCount <= 0) return 0;
+    let seen = 0;
+    for (let i = 0; i < formatted.length; i += 1) {
+      if (/\d/.test(formatted[i])) seen += 1;
+      if (seen === digitCount) return i + 1;
+    }
+    return formatted.length;
+  }
+
+  /**
+   * Live input mask that keeps the caret in place while typing or editing
+   * in the middle of the number.
+   * @param {HTMLInputElement} input
+   */
+  function attachPhoneMask(input) {
+    let previousDigits = phoneDigits(input.value);
+
+    input.addEventListener("input", (event) => {
+      const caret = input.selectionStart ?? input.value.length;
+      let digits = phoneDigits(input.value);
+      let digitsBeforeCaret = digitsOnly(input.value.slice(0, caret)).length;
+
+      // Backspacing over a mask character, e.g. ")" or "-", removes the digit before it.
+      const isBackspace = event instanceof InputEvent && event.inputType === "deleteContentBackward";
+      if (isBackspace && digits === previousDigits && digitsBeforeCaret > 0) {
+        digits = digits.slice(0, digitsBeforeCaret - 1) + digits.slice(digitsBeforeCaret);
+        digitsBeforeCaret -= 1;
+      }
+
+      const formatted = formatPhone(digits);
+      input.value = formatted;
+      previousDigits = digits;
+
+      if (document.activeElement === input) {
+        const position = caretAfterDigits(formatted, Math.min(digitsBeforeCaret, digits.length));
+        input.setSelectionRange(position, position);
+      }
+    });
+  }
+
+  /* ------------------------------------------------------------------------
+     Field state (classes, ARIA and error text)
+     ------------------------------------------------------------------------ */
+
+  /** @param {FormControl} control */
+  const getField = (control) => control.closest(".field");
+
+  /** @param {FormControl} control */
+  function getErrorElement(control) {
+    const error = getField(control)?.querySelector(".field-error");
+    if (!(error instanceof HTMLElement)) return null;
+    if (!error.id) error.id = `${control.id || control.name}-error`;
+    return error;
+  }
+
+  /**
+   * Add or remove one id from the control's aria-describedby list,
+   * keeping any ids that were already there.
+   * @param {FormControl} control
+   * @param {string} id
+   * @param {boolean} include
+   */
+  function toggleDescribedBy(control, id, include) {
+    const ids = new Set((control.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(Boolean));
+    if (include) ids.add(id);
+    else ids.delete(id);
+
+    if (ids.size > 0) control.setAttribute("aria-describedby", Array.from(ids).join(" "));
+    else control.removeAttribute("aria-describedby");
+  }
+
+  /**
+   * @param {FormControl} control
+   * @param {string} message
+   */
+  function showError(control, message) {
+    const field = getField(control);
+    field?.classList.add("is-invalid");
+    field?.classList.remove("is-valid");
+    control.setAttribute("aria-invalid", "true");
+
+    const error = getErrorElement(control);
+    if (error) {
+      error.textContent = message;
+      toggleDescribedBy(control, error.id, true);
+    }
+  }
+
+  /** @param {FormControl} control */
+  function clearError(control) {
+    getField(control)?.classList.remove("is-invalid");
+    control.removeAttribute("aria-invalid");
+
+    const error = getErrorElement(control);
+    if (error) {
+      error.textContent = "";
+      toggleDescribedBy(control, error.id, false);
+    }
+  }
+
+  /** @param {FormControl} control */
+  function clearState(control) {
+    clearError(control);
+    getField(control)?.classList.remove("is-valid");
+  }
+
+  /* ------------------------------------------------------------------------
+     Form enhancement
+     ------------------------------------------------------------------------ */
+
+  /**
+   * @param {HTMLFormElement} form
+   * @param {string} name
+   * @returns {FormControl | null}
+   */
+  function getControl(form, name) {
+    const el = form.querySelector(`[name="${name}"]`);
+    if (
+      el instanceof HTMLInputElement ||
+      el instanceof HTMLSelectElement ||
+      el instanceof HTMLTextAreaElement
+    ) {
+      return el;
+    }
+    return null;
+  }
+
+  /** @param {HTMLFormElement} form */
+  function enhanceForm(form) {
+    /** @type {Record<FieldName, FormControl | null>} */
+    const controls = {
+      name: getControl(form, "name"),
+      email: getControl(form, "email"),
+      phone: getControl(form, "phone"),
+      service: getControl(form, "service"),
+    };
+
+    const submitButton = form.querySelector('button[type="submit"]');
+    const status = form.querySelector(".form-status");
+    const buttonLabel = submitButton?.textContent ?? "";
+    let isSending = false;
+
+    const hasEmail = () => (controls.email?.value.trim() ?? "") !== "";
+    const hasPhone = () => (controls.phone ? digitsOnly(controls.phone.value) : "") !== "";
+    const requiresContact = () => Boolean(controls.email || controls.phone);
+
+    /**
+     * Error message for a field, or "" when it is valid.
+     * @param {FieldName} name
+     */
+    function getErrorMessage(name) {
+      const control = controls[name];
+      if (!control) return "";
+      const value = control.value.trim();
+
+      switch (name) {
+        case "name":
+          return value.length >= 2 ? "" : MESSAGES.name;
+        case "email":
+          if (value) return EMAIL_PATTERN.test(value) ? "" : MESSAGES.email;
+          return requiresContact() && !hasPhone() ? MESSAGES.contact : "";
+        case "phone":
+          if (value) return digitsOnly(value).length === 10 ? "" : MESSAGES.phone;
+          return requiresContact() && !hasEmail() ? MESSAGES.contact : "";
+        case "service":
+          return value ? "" : MESSAGES.service;
+        default:
+          return "";
       }
     }
-  });
-}
-  
-  /* ==================== Field Validators ==================== */
-  
-  /** validateName: must have at least 2 chars */
-  function validateName(input) {
-    removeError(input);
-    const val = input.value.trim();
-    if (val.length < 2) {
-      showError(input, "Name must be at least 2 characters.");
-      return false;
-    }
-    return true;
-  }
-  
-  /** validateOptionalEmail: if not empty => must pass email check */
-  function validateOptionalEmail(input) {
-    removeError(input);
-    const val = input.value.trim();
-    if (!val) {
-      removeHighlight(input);
-      return true; // empty => ok in real-time
-    }
-    if (!isEmailValid(val)) {
-      showError(input, "Invalid email format.");
-      return false;
-    }
-    return true;
-  }
-  
-  /** validateOptionalPhone: if not empty => must be 10 digits after removing formatting */
-  function validateOptionalPhone(input) {
-    removeError(input);
-    const digits = stripNonDigits(input.value);
-    if (!digits) {
-      // empty => no error
-      removeHighlight(input);
+
+    /**
+     * Validate one field and update its UI. Returns true when valid.
+     * @param {FieldName} name
+     */
+    function validateField(name) {
+      const control = controls[name];
+      if (!control) return true;
+
+      const message = getErrorMessage(name);
+      if (message) {
+        showError(control, message);
+        return false;
+      }
+
+      clearError(control);
+      getField(control)?.classList.toggle("is-valid", control.value.trim() !== "");
       return true;
     }
-    if (digits.length !== 10) {
-      showError(input, "Phone must be 10 digits.");
-      return false;
+
+    /**
+     * @param {string} text
+     * @param {"is-success" | "is-error" | null} state
+     */
+    function setStatus(text, state) {
+      if (!(status instanceof HTMLElement)) return;
+      status.textContent = text;
+      status.classList.toggle("is-success", state === "is-success");
+      status.classList.toggle("is-error", state === "is-error");
     }
-    return true;
-  }
-  
-  /* ==================== Utility / Logic ==================== */
-  
-  function isEmailValid(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-  
-  /** Removes all non-digits => used to check raw length for phone */
-  function stripNonDigits(str) {
-    return str.replace(/\D/g, '');
-  }
-  
-  /* Input mask: (XXX) XXX-XXXX */
-  /**
- * formatPhone(value)
- * Strips non-digits, ensures max 10 digits, and formats like:
- * (XXX) XXX-XXXX
- */
-function formatPhone(value) {
-    // 1) Strip all non-digits
-    let digits = value.replace(/\D/g, "");
-  
-    // 2) Limit to max 10
-    digits = digits.substring(0, 10);
-  
-    // 3) Construct the mask step by step
-    if (digits.length === 0) {
-      // empty -> no output
-      return "";
-    } else if (digits.length <= 3) {
-      // up to 3 digits -> "(XXX"
-      return `(${digits}`;
-    } else if (digits.length <= 6) {
-      // 4-6 digits -> "(XXX) XXX"
-      return `(${digits.substring(0, 3)}) ${digits.substring(3)}`;
-    } else {
-      // 7-10 digits -> "(XXX) XXX-XXXX"
-      return `(${digits.substring(0, 3)}) ${digits.substring(3, 6)}-${digits.substring(6)}`;
+
+    /** @param {boolean} busy */
+    function setBusy(busy) {
+      isSending = busy;
+      if (!(submitButton instanceof HTMLButtonElement)) return;
+      submitButton.disabled = busy;
+      submitButton.textContent = busy ? STATUS.sending : buttonLabel;
+      if (busy) submitButton.setAttribute("aria-busy", "true");
+      else submitButton.removeAttribute("aria-busy");
     }
-  }
-  
-  /* ==================== Error & Highlight ==================== */
-  
-  /** showError => remove old error, then create + append .error below input */
-  function showError(input, message) {
-    removeError(input);
-    const errorDiv = document.createElement("div");
-    errorDiv.classList.add("error");
-    errorDiv.style.color = "red";
-    errorDiv.style.fontSize = "0.9rem";
-    errorDiv.style.marginTop = "5px";
-    errorDiv.textContent = message;
-    input.parentNode.appendChild(errorDiv);
-  }
-  
-  /** removeError => remove existing .error in the same parent */
-  function removeError(input) {
-    const err = input.parentNode.querySelector(".error");
-    if (err) err.remove();
-  }
-  
-  /** highlightInput => apply red or green border */
-  function highlightInput(input, color) {
-    if (color === "red") {
-      input.style.border = "2px solid red";
-    } else if (color === "green") {
-      input.style.border = "2px solid green";
+
+    async function send() {
+      form.classList.remove("is-sent");
+      setStatus("", null);
+      setBusy(true);
+
+      try {
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: new FormData(form),
+          headers: { Accept: "application/json" },
+        });
+        if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+
+        form.reset();
+        VALIDATED_FIELDS.forEach((name) => {
+          const control = controls[name];
+          if (control) clearState(control);
+        });
+        form.classList.add("is-sent");
+        setStatus(STATUS.success, "is-success");
+      } catch {
+        setStatus(STATUS.error, "is-error");
+      } finally {
+        setBusy(false);
+      }
     }
+
+    // Live feedback: validate filled-in fields on blur, clear errors on input.
+    VALIDATED_FIELDS.forEach((name) => {
+      const control = controls[name];
+      if (!control) return;
+
+      const blurEvent = control instanceof HTMLSelectElement ? "change" : "blur";
+      control.addEventListener(blurEvent, () => {
+        if (control.value.trim() !== "") validateField(name);
+      });
+
+      control.addEventListener("input", () => {
+        clearState(control);
+
+        // Filling in either contact method resolves the "email or phone" error on the other.
+        const other = name === "email" ? controls.phone : name === "phone" ? controls.email : null;
+        const otherError = other ? getErrorElement(other) : null;
+        if (other && otherError?.textContent === MESSAGES.contact) clearError(other);
+      });
+    });
+
+    if (controls.phone instanceof HTMLInputElement) attachPhoneMask(controls.phone);
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (isSending) return;
+
+      const results = VALIDATED_FIELDS.map(validateField);
+      if (results.includes(false)) {
+        setStatus("", null);
+        const firstInvalid = form.querySelector('[aria-invalid="true"]');
+        if (firstInvalid instanceof HTMLElement) firstInvalid.focus();
+        return;
+      }
+
+      send();
+    });
   }
-  
-  /** removeHighlight => reset border style */
-  function removeHighlight(input) {
-    input.style.border = "";
-  }
-  
+
+  document.querySelectorAll("form.vnb-form").forEach((form) => {
+    if (form instanceof HTMLFormElement) enhanceForm(form);
+  });
+})();
