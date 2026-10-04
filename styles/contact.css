@@ -11,7 +11,7 @@
 
 /* Extra room at the bottom of the banner for the overlapping cards */
 .contact-page .page-header {
-  padding-bottom: calc(clamp(3rem, 8vw, 5.5rem) + var(--contact-overlap));
+  padding-bottom: calc(var(--page-header-pad) + var(--contact-overlap));
 }
 
 /* The layout's section starts right under the banner */
@@ -58,7 +58,7 @@
 }
 
 .contact-card h2 {
-  font-size: clamp(1.5rem, 1.5vw + 1.1rem, 2rem);
+  font-size: var(--text-h2-card);
 }
 
 .contact-card h2 + p {
@@ -134,7 +134,13 @@
   line-height: 1.4;
   color: var(--color-ink);
   text-decoration: none;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+}
+
+/* Taller tap target for the email and phone links */
+.contact-method a {
+  margin-block: -0.6rem;
+  padding-block: 0.6rem;
 }
 
 .contact-method a:hover {

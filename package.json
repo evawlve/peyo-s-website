@@ -5,9 +5,12 @@
   "description": "Static marketing site for V&B Luxe, a Lake Tahoe home-services business (carpet cleaning, snow removal, landscaping). Vanilla HTML, CSS and JavaScript.",
   "scripts": {
     "start": "npx --yes http-server . -p 8080 -c-1",
-    "typecheck": "tsc -p jsconfig.json"
+    "typecheck": "tsc -p jsconfig.json",
+    "validate": "html-validate *.html",
+    "check": "npm run typecheck && npm run validate"
   },
   "devDependencies": {
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "html-validate": "^8.29.0"
   }
 }

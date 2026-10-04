@@ -27,9 +27,10 @@ Built with **vanilla HTML, CSS, and JavaScript** — no framework, no bundler, n
 │   ├── script.js          # Nav, header state, dialogs, lightbox, scroll reveal
 │   └── validation.js      # Form validation, phone mask, async Formspree submit
 ├── images/
-│   ├── hero/              # Responsive WebP hero images (768w / 1536w)
-│   └── carpet/            # Before/after photos (800w / 1600w WebP + originals)
+│   ├── hero/              # Responsive WebP hero images (400w–1536w)
+│   └── carpet/            # Before/after photos (400w / 800w / 1600w WebP + originals)
 ├── jsconfig.json          # Type-checks the vanilla JS with TypeScript (no TS syntax)
+├── .htmlvalidate.cjs      # html-validate rules (recommended preset, two documented exceptions)
 └── package.json           # Dev scripts only — no runtime dependencies
 ```
 
@@ -38,6 +39,8 @@ Built with **vanilla HTML, CSS, and JavaScript** — no framework, no bundler, n
 ```bash
 npm start            # serves the site at http://localhost:8080
 npm run typecheck    # type-checks scripts/ via JSDoc + // @ts-check
+npm run validate     # validates every page with html-validate
+npm run check        # both of the above
 ```
 
 (Or open the folder with any static server, e.g. VS Code Live Server.)
@@ -59,4 +62,8 @@ npm run typecheck    # type-checks scripts/ via JSDoc + // @ts-check
   - Form errors are wired with `aria-invalid`/`aria-describedby`, and form status messages use a live region.
   - All motion respects `prefers-reduced-motion`.
 - **Type-safe vanilla JS.** Both scripts use `// @ts-check` with JSDoc types, and `tsc` runs in strict mode with zero errors. You get TypeScript's safety without a compile step.
-- **Forms** submit to Formspree with `fetch`, so visitors stay on the page and see an inline success or error message. A honeypot field filters spam.
+- **Forms** submit to Formspree with `fetch`, so visitors stay on the page and see an inline success or error message. Requests time out after 15 seconds, and Formspree's field errors are shown on the matching fields. A honeypot field filters spam.
+
+## Browser support
+
+Current Chrome, Edge, Firefox and Safari. Media queries use range syntax (`width >= 900px`), so the floor is **Safari 16.4 / iOS 16.4**, Chrome 104 and Firefox 102. `:has()` is used only for progressive touches (scroll lock while a dialog is open, focus rings on cards), and the site stays usable without it.

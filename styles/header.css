@@ -2,6 +2,7 @@
    V&B Luxe — site header and navigation
    Sticky brand-brown bar (the logo is white, so the bar stays dark).
    States set by script.js: .is-scrolled (compact) and .nav-open (mobile menu).
+   The 860px breakpoint is mirrored in script.js (DESKTOP_NAV_QUERY).
    ========================================================================== */
 
 
@@ -49,11 +50,6 @@
   justify-content: space-between;
   gap: var(--space-m);
   min-height: var(--header-h);
-  transition: min-height 0.3s var(--ease-out);
-}
-
-.site-header.is-scrolled .header-inner {
-  min-height: 64px;
 }
 
 
@@ -68,10 +64,14 @@
   border-radius: var(--radius-sm);
 }
 
+/* The compact state only scales the logo: changing the header's height
+   would shift the page under a sticky header and make scroll anchoring
+   bounce scrollY back and forth across the threshold. */
 .logo-img {
   width: auto;
   height: 48px;
-  transition: height 0.3s var(--ease-out), opacity var(--duration) ease;
+  transform-origin: left center;
+  transition: transform 0.3s var(--ease-out), opacity var(--duration) ease;
 }
 
 .logo:hover .logo-img {
@@ -79,16 +79,12 @@
 }
 
 .site-header.is-scrolled .logo-img {
-  height: 40px;
+  transform: scale(0.86);
 }
 
 @media (width > 860px) {
   .logo-img {
     height: 54px;
-  }
-
-  .site-header.is-scrolled .logo-img {
-    height: 44px;
   }
 }
 
@@ -133,8 +129,8 @@
   padding-inline: 1.25rem;
   font-weight: 600;
   color: #fff;
-  background-color: var(--color-accent);
-  box-shadow: 0 4px 14px rgb(0 0 0 / 0.18);
+  background-color: var(--color-accent-600);
+  box-shadow: inset 0 0 0 1px rgb(255 216 168 / 0.35), 0 4px 14px rgb(0 0 0 / 0.18);
   transition:
     background-color var(--duration) ease,
     transform var(--duration) var(--ease-out),
@@ -143,7 +139,7 @@
 
 .nav-links .nav-cta:hover {
   color: #fff;
-  background-color: #d07d1c;
+  background-color: #8a4f0c;
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgb(0 0 0 / 0.22);
 }
@@ -220,6 +216,33 @@
     display: inline-flex;
   }
 
+  /* Scrim under the open menu: dims the page and catches the outside tap,
+     so dismissing the menu never activates a link underneath */
+  .js .site-header::before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    height: 100dvh;
+    background-color: rgb(12 10 8 / 0.45);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+  }
+
+  .js .site-header.nav-open::before {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.25s ease, visibility 0s;
+  }
+
+  /* The page behind the open menu does not scroll */
+  html:has(.site-header.nav-open) {
+    overflow: hidden;
+  }
+
   .js .site-nav {
     position: absolute;
     top: 100%;
@@ -229,7 +252,8 @@
     max-height: calc(100dvh - var(--header-h));
     padding: var(--space-s) var(--gutter) var(--space-l);
     overflow-y: auto;
-    background: linear-gradient(180deg, var(--color-brand-700) 0%, #482906 100%);
+    background-color: var(--color-brand-700);
+    background-image: linear-gradient(180deg, var(--color-brand-700) 0%, #482906 100%);
     border-top: 1px solid rgb(255 255 255 / 0.08);
     box-shadow: 0 24px 40px rgb(31 26 23 / 0.3);
     visibility: hidden;
@@ -347,5 +371,31 @@
   .nav-links a:not(.nav-cta)::after {
     left: 0.7rem;
     right: 0.7rem;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   Windows High Contrast / forced colors
+   Background colors and images are replaced by system colors, so draw the
+   hamburger bars, the menu panel and the white logo explicitly.
+   -------------------------------------------------------------------------- */
+
+@media (forced-colors: active) {
+  .nav-toggle-bar {
+    background-color: CanvasText;
+    forced-color-adjust: none;
+  }
+
+  .js .site-nav {
+    background: Canvas;
+    border-bottom: 1px solid CanvasText;
+  }
+
+  .logo-img,
+  .footer-brand img {
+    background-color: #75440b;
+    border-radius: var(--radius-sm);
+    forced-color-adjust: none;
   }
 }
